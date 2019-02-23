@@ -17,4 +17,13 @@ cv2.rectangle(img, (0, 0), (width, height), (255, 255, 255),thickness=-1)
 cv2.circle(img, (circleX,circleY),2, (0,0,0),lineType=cv2.LINE_AA,thickness=-1)
 
 cv2.imshow('screen', img)
-cv2.waitKey(0)
+cv2.waitKey(5000)
+
+circleX = int(width/2)
+circleY = int(height/3)
+
+cv2.rectangle(img, (0, 0), (width, height), (255, 255, 255),thickness=-1)
+cv2.circle(img, (circleX,circleY),2, (0,0,0),lineType=cv2.LINE_AA,thickness=-1)
+
+cv2.imshow('screen', img)
+cv2.waitKey(5000)
