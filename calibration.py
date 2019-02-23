@@ -23,7 +23,18 @@ def execute(eyetracker):
     for point in points_to_calibrate:
         print(("Show a point on screen at {0}.").format(point))
 
-        subprocess.call('./DrawPointHSP/' + str(point[0]) + '_' + str(point[1]) + '.exe')
+        img_file_name = 'img/image' + str(point[0]) + '_' + str(point[1]) + '.png'
+        img = cv2.imread(img_file_name)
+        cv2.namedWindow('screen', cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty('screen', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+        height = 1920
+        width = 1080
+
+        circleX = int(width*point[0])
+        circleY = int(height*point[1])
+        cv2.imshow('screen', img)
+        cv2.waitKey(2500)
 
         print(("Collecting data at {0}.").format(point))
         if calibration.collect_data(point[0], point[1]) != tr.CALIBRATION_STATUS_SUCCESS:
@@ -41,5 +52,6 @@ def execute(eyetracker):
 
     calibration.leave_calibration_mode()
     print("Left calibration mode.")
-   
+
 execute(my_eyetracker)
+exit()
