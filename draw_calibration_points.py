@@ -3,27 +3,20 @@ import numpy as np
 
 # print(cv2.__version__)
 # 3.3.0
-cv2.namedWindow('screen', cv2.WINDOW_NORMAL)
-cv2.setWindowProperty('screen', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+points_to_calibrate = [(0.5, 0.5), (0.1, 0.1), (0.1, 0.9), (0.9, 0.1), (0.9, 0.9)]
 
-img = np.full((210, 425, 3), 128, dtype=np.uint8)
 
-height = img.shape[0]
-width = img.shape[1]
-circleX = int(width/2)
-circleY = int(height/2)
+for point in points_to_calibrate:
+    img_file_name = 'img/image' + str(point[0]) + '_' + str(point[1]) + '.png'
+    img = cv2.imread(img_file_name)
+    cv2.namedWindow('screen', cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty('screen', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-cv2.rectangle(img, (0, 0), (width, height), (255, 255, 255),thickness=-1)
-cv2.circle(img, (circleX,circleY),2, (0,0,0),lineType=cv2.LINE_AA,thickness=-1)
+    height = 1920
+    width = 1080
 
-cv2.imshow('screen', img)
-cv2.waitKey(5000)
-
-circleX = int(width/2)
-circleY = int(height/3)
-
-cv2.rectangle(img, (0, 0), (width, height), (255, 255, 255),thickness=-1)
-cv2.circle(img, (circleX,circleY),2, (0,0,0),lineType=cv2.LINE_AA,thickness=-1)
-
-cv2.imshow('screen', img)
-cv2.waitKey(5000)
+    circleX = int(width*point[0])
+    circleY = int(height*point[1])
+    cv2.imshow('screen', img)
+    cv2.waitKey(2500)
+exit()
