@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import time
 import tobii_research as tr
-import wx
 import cv2
 
 found_eyetrackers = tr.find_all_eyetrackers()
@@ -26,34 +28,29 @@ def execute(eyetracker):
     calibration = tr.ScreenBasedCalibration(eyetracker)
 
     calibration.enter_calibration_mode()
-    print(("Entered calibration mode for eye tracker with serial number {0}.").format(
+    print(('Entered calibration mode for eye tracker with serial number {0}.').format(
         eyetracker.serial_number))
 
     points_to_calibrate = [(0.5, 0.5), (0.1, 0.1),
                            (0.1, 0.9), (0.9, 0.1), (0.9, 0.9)]
 
     for point in points_to_calibrate:
-        print(("Show a point on screen at {0}.").format(point))
+        print(('Show a point on screen at {0}.').format(point))
         draw_caribration_points(point)
 
-        print(("Collecting data at {0}.").format(point))
+        print(('Collecting data at {0}.').format(point))
         if calibration.collect_data(point[0], point[1]) != tr.CALIBRATION_STATUS_SUCCESS:
             calibration.collect_data(point[0], point[1])
 
-    print("Computing and applying calibration.")
+    print('Computing and applying calibration.')
     calibration_result = calibration.compute_and_apply()
-    print(("Compute and apply returned {0} and collected at {1} points.").
-          format(calibration_result.status, len(calibration_result.calibration_points)))
-
-    print("Computing and applying calibration.")
-    calibration_result = calibration.compute_and_apply()
-    print(("Compute and apply returned {0} and collected at {1} points.").
+    print(('Compute and apply returned {0} and collected at {1} points.').
           format(calibration_result.status, len(calibration_result.calibration_points)))
 
     calibration.leave_calibration_mode()
-    print("Left calibration mode.")
+    print('Left calibration mode.')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     execute(my_eyetracker)
     exit()
