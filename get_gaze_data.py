@@ -3,47 +3,40 @@
 
 import tobii_research as tr
 import numpy as np
-import cv2
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from win32api import GetSystemMetrics
 
-global_gaze_pos = [0,0]
+found_eyetrackers = tr.find_all_eyetrackers()  # アイトラッカーを見つける
+my_eyetracker = found_eyetrackers[0]  # その中から0番目のアイトラッカーに接続する
 
-found_eyetrackers = tr.find_all_eyetrackers()
-eyetracker = found_eyetrackers[0]
-
+# PCのスクリーンの解像度を取得
 SCREEN_WIDTH = GetSystemMetrics(0)
 SCREEN_HEIGHT = GetSystemMetrics(1)
 
+is_gaze_data_getted = False
 
 def gaze_data_callback(gaze_data):
-    global gaze_data_string
+    global is_gaze_data_getted
 
+    print('callback')
     right_gaze_data = gaze_data['right_gaze_point_on_display_area']
     left_gaze_data = gaze_data['left_gaze_point_on_display_area']
 
-    has_nan_gaze_data = np.isnan(right_gaze_data)
-    has_nan_gaze_data.extend(np.isnan(left_gaze_data))
-
-    for gaze_data in has_nan_gaze_data:
-        if(gaze_data):
-            return
-
-    x = (right_gaze[0] + left_gaze[0]) / 2.0 * SCREEN_WIDTH
-    y = (right_gaze[1] + left_gaze[1]) / 2.0 * SCREEN_HEIGHT
-    global_gaze_pos = [x, y]
-    print(global_gaze_pos)
+    gaze_x = (right_gaze_data[0] +
+                     left_gaze_data[0]) / 2.0 * SCREEN_WIDTH
+    gaze_y = (right_gaze_data[1] +
+                     left_gaze_data[1]) / 2.0 * SCREEN_HEIGHT
+    
+    is_gaze_data_getted = True
+    print(gaze_x, gaze_y)
 
 
 if __name__ == '__main__':
-    eyetracker.subscribe_to(tr.EYETRACKER_GAZE_DATA,
-                            gaze_data_callback, as_dictionary=True)
-    img = np.full((255,255,255), 128, dtype=np.uint8)
-    cv2.namedWindow('screen', cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty('screen', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    while True:
-        x = int(global_gaze_pos[0])
-        y = int(global_gaze_pos[1])
+    # 視線データを取得するとgaze_data_callback()を呼ぶ
+    my_eyetracker.subscribe_to(tr.EYETRACKER_GAZE_DATA,
+                               gaze_data_callback, as_dictionary=True)
 
-        cv2.circle(img, (x, y), 15, (0,0,0), thickness=-1)
-        cv2.imshow('screen',img)
-        cv2.waitKey(0)
+    while True:
+        if(is_gaze_data_getted):
+            is_gaze_data_getted = False
